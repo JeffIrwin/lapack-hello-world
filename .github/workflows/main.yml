@@ -31,10 +31,18 @@ jobs:
         #bash ./test.sh
 
         # Build core LAPACK libs
+
+        pushd submodules/lapack
+
+        # Use default config (for gfortran)
+        cp make.inc.example make.inc
+
         make blaslib
         make lib
 
         ls -ltrh
+
+        popd
 
     #- name: Upload artifact
     #  uses: actions/upload-artifact@v2
