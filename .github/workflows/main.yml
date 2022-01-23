@@ -24,19 +24,20 @@ jobs:
         brew install gcc
         brew reinstall gcc
 
-    - name: Clean, build, and test
+    - name: Checkout submodules
       run: |
 
         git submodule update --init --recursive
-        #bash ./test.sh
 
-        # Build core LAPACK libs
+    - name: Build core LAPACK libs
+      run: |
 
         pushd submodules/lapack
 
         # Use default config (for gfortran)
         cp make.inc.example make.inc
 
+        # Only these libs are required
         make blaslib
         make lib
 
@@ -46,12 +47,18 @@ jobs:
         # From submodules/lapack
         popd
 
-        # Build our program
-        gfortran main.f90 -o main -L submodules/lapack submodules/lapack/liblapack.a submodules/lapack/librefblas.a
+    - name: Upload LAPACK artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: lapack-3-10-0
+        path: |
+          submodules/lapack/liblapack.a
+          submodules/lapack/librefblas.a
 
-    #- name: Upload artifact
-    #  uses: actions/upload-artifact@v2
-    #  with:
-    #    name: factory-0-0-1
-    #    path: inputs/frames/factory_100.pbm
+    - name: Build and test
+      run: |
+
+        gfortran main.f90 -o main submodules/lapack/liblapack.a submodules/lapack/librefblas.a
+
+        ./main
 
