@@ -40,9 +40,14 @@ jobs:
         make blaslib
         make lib
 
-        ls -ltrh
+        ## Careful:  no "ls" on Windows
+        #ls -ltrh
 
+        # From submodules/lapack
         popd
+
+        # Build our program
+        gfortran main.f90 -o main -L submodules/lapack submodules/lapack/liblapack.a submodules/lapack/librefblas.a
 
     #- name: Upload artifact
     #  uses: actions/upload-artifact@v2
