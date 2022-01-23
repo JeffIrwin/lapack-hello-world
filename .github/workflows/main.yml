@@ -5,6 +5,11 @@ on: [push]
 
 jobs:
   test:
+
+    env:
+      LAPACK_VERS: 3-10-0
+      LAPACK_DIR: submodules/lapack
+
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -29,36 +34,41 @@ jobs:
 
         git submodule update --init --recursive
 
-    - name: Build core LAPACK libs
-      run: |
-
-        pushd submodules/lapack
-
-        # Use default config (for gfortran)
-        cp make.inc.example make.inc
-
-        # Only these libs are required
-        make blaslib
-        make lib
-
-        ## Careful:  no "ls" on Windows
-        #ls -ltrh
-
-        # From submodules/lapack
-        popd
-
-    - name: Upload LAPACK artifacts
-      uses: actions/upload-artifact@v2
+    - name: Download LAPACK artifacts
+      uses: actions/download-artifact@v2
       with:
-        name: lapack-${{ matrix.os }}-3-10-0
-        path: |
-          submodules/lapack/liblapack.a
-          submodules/lapack/librefblas.a
+        name: lapack-${{ matrix.os }}-${{ env.LAPACK_VERS }}
+
+    #- name: Build core LAPACK libs
+    #  run: |
+
+    #    pushd ${{ env.LAPACK_DIR }}
+
+    #    # Use default config (for gfortran)
+    #    cp make.inc.example make.inc
+
+    #    # Only these libs are required
+    #    make blaslib
+    #    make lib
+
+    #    ## Careful:  no "ls" on Windows
+    #    #ls -ltrh
+
+    #    # From LAPACK dir
+    #    popd
+
+    #- name: Upload LAPACK artifacts
+    #  uses: actions/upload-artifact@v2
+    #  with:
+    #    name: lapack-${{ matrix.os }}-${{ env.LAPACK_VERS }}
+    #    path: |
+    #      ${{ env.LAPACK_DIR }}/liblapack.a
+    #      ${{ env.LAPACK_DIR }}/librefblas.a
 
     - name: Build and test
       run: |
 
-        gfortran main.f90 -o main submodules/lapack/liblapack.a submodules/lapack/librefblas.a
+        gfortran main.f90 -o main ${{ env.LAPACK_DIR }}/liblapack.a ${{ env.LAPACK_DIR }}/librefblas.a
 
         ./main
 
