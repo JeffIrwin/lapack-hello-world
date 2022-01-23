@@ -36,6 +36,7 @@ jobs:
         key: lapack-${{ matrix.os }}-${{ env.LAPACK_VERS }}
 
     - name: Checkout submodules
+      shell: bash
       run: |
 
         git submodule update --init --recursive || echo "ignoring submodule error"
