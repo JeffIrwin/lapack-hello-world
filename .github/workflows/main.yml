@@ -50,7 +50,7 @@ jobs:
     - name: Upload LAPACK artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: lapack-3-10-0
+        name: lapack-${{ matrix.os }}-3-10-0
         path: |
           submodules/lapack/liblapack.a
           submodules/lapack/librefblas.a
