@@ -7,6 +7,6 @@ gfortran, on Windows, Linux, and macOS
 ## TODO
 
 - fork LAPACK
-- download artifact from previous build, if possible, to avoid recompiling
-  LAPACK on every run
+- test changing LAPACK submodule, editing version in yaml, and checking if it
+  will recompile correctly
 

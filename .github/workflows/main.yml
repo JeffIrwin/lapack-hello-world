@@ -41,7 +41,7 @@ jobs:
 
         git submodule update --init --recursive || echo "ignoring submodule error"
 
-    #- name: Download LAPACK artifacts
+    #- name: Download LAPACK artifacts.  Only works for the same workflow run, so what's the point?
     #  uses: actions/download-artifact@v2
     #  with:
     #    name: lapack-${{ matrix.os }}-${{ env.LAPACK_VERS }}
